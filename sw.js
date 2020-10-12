@@ -8,7 +8,7 @@ if (typeof importScripts === 'function') {
     workbox.core.skipWaiting()
 
     /* injection point for manifest files.  */
-    workbox.precaching.precacheAndRoute([{"revision":"58b80137aebbbfbc86ff67de959c9fd7","url":"index.html"},{"revision":"33dbdd0177549353eeeb785d02c294af","url":"logo192.png"},{"revision":"917515db74ea8d1aee6a246cfbcc0b45","url":"logo512.png"},{"revision":"58df890c37aafb40e18bfc1e232f712c","url":"precache-manifest.58df890c37aafb40e18bfc1e232f712c.js"},{"revision":"d34b825dce71b56d901b8320de59787b","url":"service-worker.js"},{"revision":"eac203985bdb019f84605aac04abb861","url":"static/css/main.5ecd60fb.chunk.css"},{"revision":"099e0ae7aacf0cf46426dc435aa8141f","url":"static/js/2.0feb3c0c.chunk.js"},{"revision":"2ff3cf51b2a9aee7f68f8d1e08c84ef3","url":"static/js/main.3cdb90ad.chunk.js"},{"revision":"ea4b3261f31bed179765a887b6af4735","url":"static/js/runtime-main.f73bf744.js"}])
+    workbox.precaching.precacheAndRoute([{"revision":"0bde837c5ae965b5cd00f11fc8e28be7","url":"index.html"},{"revision":"33dbdd0177549353eeeb785d02c294af","url":"logo192.png"},{"revision":"917515db74ea8d1aee6a246cfbcc0b45","url":"logo512.png"},{"revision":"793bec46fb5e20d9dafad7de7321232c","url":"precache-manifest.793bec46fb5e20d9dafad7de7321232c.js"},{"revision":"5dc4fafe525e2a950c19860eaf61cdb6","url":"service-worker.js"},{"revision":"eac203985bdb019f84605aac04abb861","url":"static/css/main.5ecd60fb.chunk.css"},{"revision":"099e0ae7aacf0cf46426dc435aa8141f","url":"static/js/2.0feb3c0c.chunk.js"},{"revision":"55e8d03c4050b0a135ab3c334fe5624a","url":"static/js/main.13d09b35.chunk.js"},{"revision":"ea4b3261f31bed179765a887b6af4735","url":"static/js/runtime-main.f73bf744.js"}])
 
     /* custom cache rules */
     workbox.routing.registerRoute(
