@@ -8,7 +8,7 @@ if (typeof importScripts === 'function') {
     workbox.core.skipWaiting()
 
     /* injection point for manifest files.  */
-    workbox.precaching.precacheAndRoute([{"revision":"0a0167435df195cddcea67943265ed45","url":"index.html"},{"revision":"33dbdd0177549353eeeb785d02c294af","url":"logo192.png"},{"revision":"917515db74ea8d1aee6a246cfbcc0b45","url":"logo512.png"},{"revision":"089fb6a0f4974c00beedc80fc6d40934","url":"precache-manifest.089fb6a0f4974c00beedc80fc6d40934.js"},{"revision":"86587e265c80c773b5356e1a42b5914a","url":"service-worker.js"},{"revision":"eac203985bdb019f84605aac04abb861","url":"static/css/main.5ecd60fb.chunk.css"},{"revision":"80d17178a489d55e0325eff754b0e1a1","url":"static/js/2.02306e0e.chunk.js"},{"revision":"f3eb3a2153afa41377c3f6c073050e48","url":"static/js/main.05828c99.chunk.js"},{"revision":"c2ba25cf6eea443d01d4df49ca008616","url":"static/js/runtime-main.f3456f13.js"}])
+    workbox.precaching.precacheAndRoute([{"revision":"6375cbab4cad74f3976c96c294e7fbfa","url":"index.html"},{"revision":"33dbdd0177549353eeeb785d02c294af","url":"logo192.png"},{"revision":"917515db74ea8d1aee6a246cfbcc0b45","url":"logo512.png"},{"revision":"e91befd07aa939e37b3ce9e0195bffa5","url":"precache-manifest.e91befd07aa939e37b3ce9e0195bffa5.js"},{"revision":"3e1797a174137ea68d6a18d58173b4a0","url":"service-worker.js"},{"revision":"eac203985bdb019f84605aac04abb861","url":"static/css/main.5ecd60fb.chunk.css"},{"revision":"43d619086e4d98b226c71f346a884264","url":"static/js/2.d06f870b.chunk.js"},{"revision":"f804a6ec86bfb933b199935f97cdb53f","url":"static/js/main.b555a4df.chunk.js"},{"revision":"98a480677eee115dbecd6b1316a96684","url":"static/js/runtime-main.c61ccbe0.js"}])
 
     /* custom cache rules */
     workbox.routing.registerRoute(
@@ -29,7 +29,6 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
   event.waitUntil(self.clients.claim())
-  console.log('activate sw')
 })
 
 const notify = (title, options) => {
@@ -52,19 +51,25 @@ self.addEventListener('message', event => {
   ]
 
   const baseOptions = {
-    vibrate: [250,250,250]
+    vibrate: [250, 250, 250]
   }
 
   switch (event.data.type) {
     case 'NOTIFY_LONG':
-      notify('Time to take a long break', { ...baseOptions, actions: intervalActions })
+      notify('Time to take a long break', {
+        ...baseOptions,
+        actions: intervalActions
+      })
       break
     case 'NOTIFY_SHORT':
-      notify('Time to take a short break', {...baseOptions, actions: intervalActions })
+      notify('Time to take a short break', {
+        ...baseOptions,
+        actions: intervalActions
+      })
       break
     case 'NOTIFY_WORK':
       notify('Time to work', {
-        ...baseOptions
+        ...baseOptions,
         actions: baseActions
       })
       break
@@ -76,25 +81,19 @@ self.addEventListener('message', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close()
   const action = event.action || 'default'
-  console.log('action type:', action)
   if (action === 'default') {
-    const promise = new Promise((resolve) => {
+    const promise = new Promise(resolve => {
       self.clients.matchAll().then(clientList => {
 
-        
-        console.log(clientList.length)
-        
-        clientList.forEach((client) => {
-          console.log('focus' in client, client)
+        clientList.forEach(client => {
           if ('focus' in client) {
-            console.log('trying focus on ', client)
             client.focus()
           }
         })
         resolve()
       })
     })
-    event.waitUntil(promise) 
+    event.waitUntil(promise)
   } else {
     postMessage({ type: 'NOTIFICATION_ACTION', action })
   }
