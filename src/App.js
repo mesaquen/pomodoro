@@ -12,10 +12,12 @@ const Container = styled.div`
   padding-top: 30vh;
   align-items: center;
 `
+const isDev = process.env.NODE_ENV === 'development'
 
-const workingTime = 0.25
-const shortBreak = 0.05
-const longBreak = 0.15
+const workingTime = isDev ? 0.25 : 25
+const shortBreak = isDev ? 0.05 : 5
+const longBreak = isDev ? 0.15 : 15
+
 const defaultLabels = ['Working time', 'Short interval', 'Long interval']
 const initialState = {
   workingTime,
@@ -41,9 +43,11 @@ export default class App extends React.PureComponent {
 
   componentDidMount () {
     this.requestNotificationPermission()
-    navigator.serviceWorker.ready.then(() => {
-      navigator.serviceWorker.addEventListener('message', this.handleMessage)
-    })
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(() => {
+        navigator.serviceWorker.addEventListener('message', this.handleMessage)
+      })
+    }
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -64,9 +68,14 @@ export default class App extends React.PureComponent {
   }
 
   componentWillUnmount () {
-    navigator.serviceWorker.ready.then(() => {
-      navigator.serviceWorker.removeEventListener('message', this.handleMessage)
-    })
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(() => {
+        navigator.serviceWorker.removeEventListener(
+          'message',
+          this.handleMessage
+        )
+      })
+    }
   }
 
   skipStep = () => {}
@@ -83,11 +92,10 @@ export default class App extends React.PureComponent {
         return this.play()
       }
 
-      this.setState({messagedata: event.data})
+      this.setState({ messagedata: event.data })
 
       return null
     }
-    
   }
 
   updateTitle = () => {

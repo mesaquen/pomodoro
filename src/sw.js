@@ -29,7 +29,6 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
   event.waitUntil(self.clients.claim())
-  console.log('activate sw')
 })
 
 const notify = (title, options) => {
@@ -51,15 +50,26 @@ self.addEventListener('message', event => {
     { action: 'skip', title: 'Skip interval' }
   ]
 
+  const baseOptions = {
+    vibrate: [250, 250, 250]
+  }
+
   switch (event.data.type) {
     case 'NOTIFY_LONG':
-      notify('Time to take a long break', { actions: intervalActions })
+      notify('Time to take a long break', {
+        ...baseOptions,
+        actions: intervalActions
+      })
       break
     case 'NOTIFY_SHORT':
-      notify('Time to take a short break', { actions: intervalActions })
+      notify('Time to take a short break', {
+        ...baseOptions,
+        actions: intervalActions
+      })
       break
     case 'NOTIFY_WORK':
       notify('Time to work', {
+        ...baseOptions,
         actions: baseActions
       })
       break
@@ -69,26 +79,21 @@ self.addEventListener('message', event => {
 })
 
 self.addEventListener('notificationclick', event => {
+  event.notification.close()
   const action = event.action || 'default'
-  console.log('action type:', action)
   if (action === 'default') {
-    const promise = new Promise((resolve) => {
+    const promise = new Promise(resolve => {
       self.clients.matchAll().then(clientList => {
 
-        
-        console.log(clientList.length)
-        
-        clientList.forEach((client) => {
-          console.log('focus' in client, client)
+        clientList.forEach(client => {
           if ('focus' in client) {
-            console.log('trying focus on ', client)
             client.focus()
           }
         })
         resolve()
       })
     })
-    event.waitUntil(promise) 
+    event.waitUntil(promise)
   } else {
     postMessage({ type: 'NOTIFICATION_ACTION', action })
   }

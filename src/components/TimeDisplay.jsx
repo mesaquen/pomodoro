@@ -17,7 +17,7 @@ const StyledSpan = styled.span`
 export const getTimeString = (time, showHours) => {
   const hoursValue = showHours ? Math.floor(time / MS_IN_H) : 0
   const minutesValue = Math.floor((time - hoursValue * MS_IN_H) / MS_IN_M)
-  const secondsValue = Math.ceil(
+  const secondsValue = Math.floor(
     (time - (hoursValue * MS_IN_H + minutesValue * MS_IN_M)) / MS_IN_S
   )
 
