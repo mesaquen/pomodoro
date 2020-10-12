@@ -51,18 +51,21 @@ export default class App extends React.PureComponent {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const { start, running, timeLeft } = this.state
+    const { start, running, timeLeft, skipNotify, isBreak } = this.state
 
     if (start && start !== prevState.start && running) {
       this.tick()
     }
 
-    if (!running && running !== prevState.running) {
-      this.setInitialTime()
+    if (!skipNotify && !running && running !== prevState.running) {
       this.notify()
     }
 
-    if (running && timeLeft !== prevState.timeLeft) {
+    if (isBreak !== prevState.isBreak) {
+      this.setInitialTime()
+    }
+
+    if (timeLeft !== prevState.timeLeft) {
       this.updateTitle()
     }
   }
@@ -78,7 +81,9 @@ export default class App extends React.PureComponent {
     }
   }
 
-  skipStep = () => {}
+  skipStep = () => {
+    this.nextMode()
+  }
 
   handleMessage = event => {
     const { data } = event ?? {}
@@ -92,7 +97,9 @@ export default class App extends React.PureComponent {
         return this.play()
       }
 
-      this.setState({ messagedata: event.data })
+      if (data.action === 'skip') {
+        return this.nextMode()
+      }
 
       return null
     }
@@ -172,6 +179,7 @@ export default class App extends React.PureComponent {
     const { running } = this.state
     if (!running) {
       this.setState({
+        skipNotify: false,
         running: true,
         start: new Date()
       })
@@ -188,25 +196,32 @@ export default class App extends React.PureComponent {
     return labels[0]
   }
 
-  stop = () => {
+  nextMode = skipNotify => {
+    const { breakCount, maxBreaks, isBreak } = this.state
+    const nextBreakIndex = (breakCount + 1) % maxBreaks
+    this.setState({
+      skipNotify,
+      running: false,
+      start: null,
+      isBreak: !isBreak,
+      breakCount: isBreak ? breakCount : nextBreakIndex,
+      isLongBreak: isBreak ? false : nextBreakIndex === 0,
+      activeLabel: this.getActiveLabel(!isBreak, nextBreakIndex)
+    })
+  }
+
+  stop = skipNotify => {
     if (this.state.running) {
       if (this.timeId.current) {
         clearTimeout(this.timeId.current)
         this.timeId.current = null
       }
 
-      const { breakCount, maxBreaks, isBreak } = this.state
-      const nextBreakIndex = (breakCount + 1) % maxBreaks
-      this.setState({
-        running: false,
-        start: null,
-        isBreak: !isBreak,
-        breakCount: isBreak ? breakCount : nextBreakIndex,
-        isLongBreak: isBreak ? false : nextBreakIndex === 0,
-        activeLabel: this.getActiveLabel(!isBreak, nextBreakIndex)
-      })
+      this.nextMode(skipNotify)
     }
   }
+
+  noNotificationStop = () => this.stop(true)
 
   render () {
     const { running, timeLeft, labels, activeLabel } = this.state
@@ -216,11 +231,10 @@ export default class App extends React.PureComponent {
         <TimeDisplay time={timeLeft} />
 
         {running ? (
-          <Button onClick={this.stop}>stop</Button>
+          <Button onClick={this.noNotificationStop}>stop</Button>
         ) : (
           <Button onClick={this.play}>start</Button>
         )}
-        <pre>{JSON.stringify(this.state.messagedata, null, 2)}</pre>
       </Container>
     )
   }
