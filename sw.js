@@ -51,15 +51,20 @@ self.addEventListener('message', event => {
     { action: 'skip', title: 'Skip interval' }
   ]
 
+  const baseOptions = {
+    vibrate: [250,250,250]
+  }
+
   switch (event.data.type) {
     case 'NOTIFY_LONG':
-      notify('Time to take a long break', { actions: intervalActions })
+      notify('Time to take a long break', { ...baseOptions, actions: intervalActions })
       break
     case 'NOTIFY_SHORT':
-      notify('Time to take a short break', { actions: intervalActions })
+      notify('Time to take a short break', {...baseOptions, actions: intervalActions })
       break
     case 'NOTIFY_WORK':
       notify('Time to work', {
+        ...baseOptions
         actions: baseActions
       })
       break
@@ -69,6 +74,7 @@ self.addEventListener('message', event => {
 })
 
 self.addEventListener('notificationclick', event => {
+  event.notification.close()
   const action = event.action || 'default'
   console.log('action type:', action)
   if (action === 'default') {
