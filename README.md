@@ -23,3 +23,7 @@ yarn install
 ```sh
 yarn start
 ```
+
+## Live demo
+
+You can check out a [live demo](https://mesaquen.github.io/pomodoro)
